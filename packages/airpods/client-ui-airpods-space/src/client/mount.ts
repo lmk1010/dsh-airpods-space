@@ -29,6 +29,7 @@ const PREFERENCES_KEY_V1 = 'dsh.airpods-space.preferences'
 const DEFAULT_PREFERENCES: Preferences = { sendMode: 'voice', pauseSeconds: 1, autoRead: true, asrSource: 'apple',
   popupCard: true, doneSound: true, earcons: true, readApproval: true,
   progress: false, quickInterrupt: true, quickInsert: true, voiceCommands: true,
+  nextAction: 'send', previousAction: 'interrupt',
   onboarded: globalThis.localStorage?.getItem('dsh.airpods-space.onboarded') !== null }
 
 /** Preferences persisted in this browser profile. */

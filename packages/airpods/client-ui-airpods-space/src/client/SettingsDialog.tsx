@@ -4,8 +4,8 @@
  * immediately.
  */
 import { useEffect, useState, type ReactNode } from 'react'
-import { Button, IconCloseOutlineRegular, IconMicrophoneOutlineRegular, Modal, SegmentedControl, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { AirpodsSnapshot, DeviceInfo, Preferences } from '@dshub/airpods-space/types'
+import { Button, IconCloseOutlineRegular, IconMicrophoneOutlineRegular, Menu, Modal, SegmentedControl, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { AirpodsSnapshot, DeviceInfo, GestureAction, Preferences } from '@dshub/airpods-space/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { AirpodsKey, NS } from './locales.ts'
 import { CloudKeyField } from './SourcePicker.tsx'
@@ -240,9 +240,20 @@ function Battery({ label, value }: { label: string; value: number | null }) {
 
 function TalkPage({ snapshot, preferences, onPreferences, onSetup, t }: SettingsDialogProps) {
   const doubleTap = doubleTapModel({ snapshot })
-  return (
+  return (<>
+    <Group title={t('gesture.title')}>
+      <Row label={t(doubleTap ? 'gesture.tapTalk' : 'gesture.pressOnce')} detail={t('gesture.talkAction')} />
+      <Row label={t(doubleTap ? 'gesture.tapNext' : 'gesture.pressTwice')} detail={doubleTap ? t('gesture.tapNextDetail') : undefined}>
+        <ActionPicker value={preferences.nextAction} t={t}
+          onChange={(nextAction) => { onPreferences({ ...preferences, nextAction }) }} />
+      </Row>
+      <Row label={t(doubleTap ? 'gesture.tapPrevious' : 'gesture.pressThrice')} detail={doubleTap ? t('gesture.tapPreviousDetail') : undefined}>
+        <ActionPicker value={preferences.previousAction} t={t}
+          onChange={(previousAction) => { onPreferences({ ...preferences, previousAction }) }} />
+      </Row>
+      {!doubleTap && <Row label={t('gesture.hold')} detail={t('gesture.holdDetail')} />}
+    </Group>
     <Group>
-      <Row label={t('talk.start')} detail={t(doubleTap ? 'talk.doubleTap' : 'talk.press')} />
       <Row label={t('menu.sendMode')} detail={t(preferences.sendMode === 'voice' ? 'send.voiceDetail' : 'send.pauseDetail', { seconds: String(preferences.pauseSeconds) })}>
         <SegmentedControl id="airpods-send-mode" label={t('menu.sendMode')} value={preferences.sendMode}
           onChange={(sendMode) => { onPreferences({ ...preferences, sendMode }) }}
@@ -257,6 +268,23 @@ function TalkPage({ snapshot, preferences, onPreferences, onSetup, t }: Settings
       )}
       <Row label={t('menu.setup')}><Button size="sm" variant="outline" onClick={onSetup}>{t('settings.restart')}</Button></Row>
     </Group>
+  </>)
+}
+
+const ACTIONS: readonly GestureAction[] = ['send', 'interrupt', 'steer', 'undo', 'read', 'none']
+
+/** Dropdown of gesture actions, anchored like the composer's model selector. */
+function ActionPicker({ value, onChange, t }: { value: GestureAction; onChange: (action: GestureAction) => void; t: SettingsDialogProps['t'] }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <Menu open={open} portal side="bottom" align="end" selectedIds={[value]} onClose={() => { setOpen(false) }}
+      onSelect={(id) => { setOpen(false); onChange(id as GestureAction) }}
+      items={ACTIONS.map(action => ({ id: action, label: t(`action.${action}`) }))}
+      anchor={(
+        <Button size="sm" variant="outline" aria-haspopup="menu" aria-expanded={open} onClick={() => { setOpen(!open) }}>
+          {t(`action.${value}`)} ▾
+        </Button>
+      )} />
   )
 }
 

@@ -119,14 +119,10 @@ final class Voice {
     let now = Date()
     guard now.timeIntervalSince(lastEarChange) >= earGraceSeconds, now.timeIntervalSince(lastPress) > config.pressDebounceSeconds else { return }
     lastPress = now
-    if name == "next" {
-      reader?.stop()
-      if state == .talking || state == .opening { cancelTurn() }
-      emit("gesture", ["kind": "interrupt"])
-    } else {
-      if state == .talking || state == .opening { cancelTurn() }
-      emit("gesture", ["kind": "undo"])
-    }
+    // Next / Previous Track (double / triple press, or a bud set to them) finish the current turn with its words
+    // kept; the Host maps the gesture to the user's chosen action (send, interrupt, insert, undo, read).
+    if state == .talking { endTalk(reason: name) } else if state == .opening { cancelTurn() }
+    emit("gesture", ["kind": name])
   }
 
   /// Apple recognition was refused: tell the Host so turns use its recognizers instead.

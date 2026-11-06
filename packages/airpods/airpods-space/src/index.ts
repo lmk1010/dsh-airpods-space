@@ -11,7 +11,7 @@ import { Channel, type StreamingSession, type SpeechProviderId } from '@dshub/sp
 import { helperAssets, helperExecutable } from '@dshub/airpods-helper'
 import { HelperProcess, type HelperEvent } from './helper.ts'
 import { parseCommand, trailingInsert, trailingSend } from './commands.ts'
-import type { AirpodsSnapshot, AirpodsUpdate, CommandKind, Competitor, DeviceInfo, ModelState, PodsState, Preferences, TalkPhase, TranscriptUpdate } from './types.ts'
+import type { AirpodsSnapshot, AirpodsUpdate, CommandKind, GestureAction, Competitor, DeviceInfo, ModelState, PodsState, Preferences, TalkPhase, TranscriptUpdate } from './types.ts'
 
 export type * from './types.ts'
 export { parseCommand } from './commands.ts'
@@ -63,6 +63,8 @@ interface Turn {
   heard: string
   changedAt: number
   delivered: boolean
+  /** A gesture during the turn asked to send or insert its words once they are final. */
+  after?: 'send' | 'steer'
 }
 
 /** Host controller; Remote calls never submit to a Session, the Client decides what to do with transcripts. */
@@ -91,7 +93,8 @@ export default class AirpodsSpace extends TypertRemoteService {
     reading: false, headMotion: false, route: { output: '', outputBluetooth: false },
     preferences: { sendMode: 'voice', pauseSeconds: 1, autoRead: true, asrSource: 'apple', onboarded: false,
       popupCard: true, doneSound: true, earcons: true, readApproval: true,
-      progress: false, quickInterrupt: true, quickInsert: true, voiceCommands: true } }
+      progress: false, quickInterrupt: true, quickInsert: true, voiceCommands: true,
+      nextAction: 'send', previousAction: 'interrupt' } }
   private readonly observers = new Set<Channel<AirpodsUpdate>>()
   private readonly helper: HelperProcess | undefined
   private turn: Turn | undefined
@@ -466,8 +469,10 @@ export default class AirpodsSpace extends TypertRemoteService {
         }
         break
       case 'gesture': {
+        const kind = String(event.kind)
+        if (kind === 'next' || kind === 'previous') { this.trackGesture(kind); break }
         const kinds: Record<string, CommandKind> = { interrupt: 'interrupt', undo: 'undo', 'stop-reading': 'stop-reading', send: 'send' }
-        const command = kinds[String(event.kind)]
+        const command = kinds[kind]
         if (command) this.publish({ type: 'command', command })
         break
       }
@@ -583,6 +588,16 @@ export default class AirpodsSpace extends TypertRemoteService {
     turn.abort.signal.addEventListener('abort', () => { clearInterval(watch) }, { once: true })
   }
 
+  /** Run the user's action for a Next / Previous Track gesture; send and insert wait for the turn's final words. */
+  private trackGesture(kind: 'next' | 'previous'): void {
+    const action: GestureAction = kind === 'next' ? this.state.preferences.nextAction : this.state.preferences.previousAction
+    if (action === 'none') return
+    const turn = this.turn
+    if (turn && !turn.delivered && (action === 'send' || action === 'steer')) { turn.after = action; return }
+    if (action === 'interrupt') this.helper?.send({ cmd: 'stop-speaking' })
+    this.publish({ type: 'command', command: action })
+  }
+
   /** Pause send mode waits the user's chosen silence; otherwise the configured end-of-turn silence applies. */
   private endSilenceMs(preferences: Preferences): number {
     return preferences.sendMode === 'pause' ? preferences.pauseSeconds * 1000 : this.config.autoEndSilenceMs
@@ -611,7 +626,8 @@ export default class AirpodsSpace extends TypertRemoteService {
     if (command === undefined) {
       const spoken = trailingSend(text)
       const body = spoken ?? text
-      this.transcript(turn, 'final', body, body.trim() !== '' && (spoken !== undefined || this.state.preferences.sendMode === 'pause'))
+      const submit = turn.after === 'send' || spoken !== undefined || this.state.preferences.sendMode === 'pause'
+      this.transcript(turn, 'final', body, body.trim() !== '' && submit && turn.after !== 'steer', turn.after === 'steer' && body.trim() !== '')
       return
     }
     this.transcript(turn, 'final', '')

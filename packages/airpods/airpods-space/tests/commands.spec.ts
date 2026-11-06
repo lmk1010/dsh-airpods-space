@@ -10,11 +10,13 @@ it('recognizes command phrases with punctuation and trailing filler', () => {
   expect(parseCommand('读一下！')).toBe('read')
   expect(parseCommand('Stop')).toBe('interrupt')
   expect(parseCommand('好，发送。')).toBe('send')
+  expect(parseCommand('发现。')).toBe('send')
 })
 
 it('leaves sentences that merely contain a phrase as ordinary speech', () => {
   expect(parseCommand('帮我把这个发送给张经理')).toBeUndefined()
   expect(parseCommand('停车场在哪里')).toBeUndefined()
+  expect(parseCommand('我发现了一个问题')).toBeUndefined()
   expect(parseCommand('')).toBeUndefined()
 })
 

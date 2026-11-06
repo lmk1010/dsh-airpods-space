@@ -113,6 +113,10 @@ export interface TranscriptUpdate {
  * command (a whole utterance that is exactly a command phrase).
  */
 export type CommandKind = 'interrupt' | 'undo' | 'send' | 'cancel' | 'new-session' | 'clear' | 'read' | 'approve' | 'deny' | 'stop-reading'
+  | 'steer'
+
+/** What a Next / Previous Track gesture does (double / triple stem press, or an AirPod set to that track action). */
+export type GestureAction = 'send' | 'interrupt' | 'steer' | 'undo' | 'read' | 'none'
 
 /** User preferences, persisted by the Client and pushed with `setPreferences`. */
 export interface Preferences {
@@ -145,6 +149,10 @@ export interface Preferences {
   readonly quickInsert: boolean
   /** Whole-utterance voice commands other than send and stop: cancel, clear, new session, read, approve, deny. */
   readonly voiceCommands: boolean
+  /** Next Track gesture: double stem press on AirPods 3/4/Pro, or an AirPods 1/2 bud set to Next Track. */
+  readonly nextAction: GestureAction
+  /** Previous Track gesture: triple stem press, or a bud set to Previous Track. */
+  readonly previousAction: GestureAction
 }
 
 /** Stream item: a full snapshot after any state change, a transcript update, or a command. */

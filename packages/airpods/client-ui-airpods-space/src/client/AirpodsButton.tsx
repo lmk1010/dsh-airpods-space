@@ -185,6 +185,7 @@ export function createAirpodsButton({ airpods, press, takeButton, connectDevice,
           if (sessionId !== undefined && (view.snapshot?.preferences.quickInterrupt ?? true)) cancelSession(sessionId)
           break
         case 'undo': case 'cancel': if (lastTurn.current && !lastTurn.current.sent) inputActions.setDraft(lastTurn.current.base); break
+        case 'steer': setAwaiting(false); steer(); showFlash('sent', 1200); break
         case 'send': setAwaiting(false); inputActions.submit(); showFlash('sent', 1200); break
         case 'clear': inputActions.setDraft(''); break
         case 'new-session': document.dispatchEvent(new KeyboardEvent('keydown', { key: 'n', code: 'KeyN', metaKey: true, bubbles: true })); break

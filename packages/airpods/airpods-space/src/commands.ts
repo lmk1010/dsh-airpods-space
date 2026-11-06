@@ -3,7 +3,8 @@ import type { CommandKind } from './types.ts'
 
 const PHRASES: Readonly<Record<CommandKind, readonly string[]>> = {
   interrupt: ['停', '停一下', '停下', '停止', '别说了', '打断', 'stop'],
-  send: ['发送', '发出去', '发吧', 'send'],
+  // Said alone, short "发送" is often heard as 发现 / 发 / 发出; as a whole utterance they can only mean send.
+  send: ['发送', '发出去', '发吧', '发现', '发', '发出', '送出', 'send'],
   cancel: ['取消', '算了', '不要了', 'cancel'],
   'new-session': ['新会话', '新建会话', '新对话', '开个新会话'],
   clear: ['清空', '清空输入框', 'clear'],
@@ -12,6 +13,8 @@ const PHRASES: Readonly<Record<CommandKind, readonly string[]>> = {
   approve: ['同意', '允许', '可以'],
   deny: ['拒绝', '不允许'],
   'stop-reading': ['别读了', '不用读了'],
+  // Insert is spoken at the end of a sentence (trailingInsert), never as a whole-utterance command.
+  steer: [],
 }
 
 const lookup = new Map<string, CommandKind>(
