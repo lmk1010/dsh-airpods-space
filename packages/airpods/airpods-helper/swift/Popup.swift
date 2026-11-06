@@ -338,7 +338,12 @@ struct PopupCard: View {
   }
 
   private var hint: String {
-    if model.pods.unpaired { return "这副耳机还没和这台 Mac 配对：按住充电盒上的按钮，直到灯闪白光" }
+    if model.pods.unpaired {
+      // How each case enters pairing mode: AirPods 4 has a touch area on the front, Max a noise-control button.
+      let how = model.pods.model.hasPrefix("airpods-4") ? "在充电盒正面轻点两下"
+        : model.pods.model.hasPrefix("airpods-max") ? "按住降噪控制按钮" : "按住充电盒背面的按钮"
+      return "这副耳机还没和这台 Mac 配对：\(how)，直到灯闪白光"
+    }
     if model.worn {
       switch model.pods.gesture {
       case "press": return "已连接 · 捏一下耳机柄，和 DSH 说话"
