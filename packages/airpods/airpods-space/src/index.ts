@@ -94,7 +94,7 @@ export default class AirpodsSpace extends TypertRemoteService {
     preferences: { sendMode: 'voice', pauseSeconds: 1, autoRead: true, asrSource: 'apple', onboarded: false,
       popupCard: true, nearbyUnpaired: true, doneSound: true, earcons: true, readApproval: true,
       progress: false, quickInterrupt: true, quickInsert: true, voiceCommands: true,
-      nextAction: 'send', previousAction: 'interrupt' } }
+      nextAction: 'interrupt', previousAction: 'undo' } }
   private readonly observers = new Set<Channel<AirpodsUpdate>>()
   private readonly helper: HelperProcess | undefined
   private turn: Turn | undefined
