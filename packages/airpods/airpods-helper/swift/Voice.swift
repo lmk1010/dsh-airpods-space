@@ -41,6 +41,8 @@ final class Voice {
   var onNeedsMicrophone: (() -> Void)?
   /// Opening or closing the headset microphone switches the AirPods profile, which makes other apps restart their output.
   var micChangedAt = Date.distantPast
+  /// Set by the Host while DSH is answering in the current session.
+  var busy = false
   /// Apple's on-device recognizer, used when the Host selects the `apple` source.
   let apple = AppleRecognizer()
   var useApple = false
@@ -150,8 +152,9 @@ final class Voice {
     guard now.timeIntervalSince(lastPress) > config.pressDebounceSeconds else { return }
     lastPress = now
     emit("press", ["source": source, "detail": detail, "state": state.rawValue])
-    if reader?.speaking == true && state != .talking {
-      reader?.stop(); emit("gesture", ["kind": "stop-reading"]); return
+    // While DSH answers (busy) or reads aloud, a press interrupts it instead of opening the microphone.
+    if (busy || reader?.speaking == true) && state != .talking && state != .opening {
+      reader?.stop(); emit("gesture", ["kind": busy ? "interrupt" : "stop-reading"]); return
     }
     switch state {
     case .idle, .lingering: startTalk(trigger: source)

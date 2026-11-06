@@ -118,6 +118,7 @@ function registerUi(ctx: Context): void {
       const result = await ctx.remote.airpods.testCloud()
       return result.ok ? result.value : { ok: false, ms: 0, message: String(result.error) }
     },
+    setBusy: (on) => { void call(() => ctx.remote.airpods.setBusy(on)) },
     chime: (name) => { void call(() => ctx.remote.airpods.chime(name)) },
     openLink: (target) => { void call(() => ctx.remote.airpods.openLink(target)) },
     deviceImage: async (model, variant) => {

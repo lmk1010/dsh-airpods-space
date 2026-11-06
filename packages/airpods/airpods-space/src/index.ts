@@ -251,6 +251,13 @@ export default class AirpodsSpace extends TypertRemoteService {
   }
 
   /**
+   * Whether DSH is answering in the current session; while it is, a headset press interrupts instead of listening.
+   * @param on - DSH is answering.
+   */
+  @Remote
+  setBusy(on: boolean): void { this.command({ cmd: 'busy', on }) }
+
+  /**
    * Play an outcome tone through the current output (the AirPods while connected).
    * @param name - `done` when a task finishes, `failed` when it stops with an error, `approval` when DSH asks.
    */

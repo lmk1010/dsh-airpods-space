@@ -233,6 +233,7 @@ readCommands { command in
   case "stop-speaking": reader.stop()
   case "caption": capsule.update(phase: command["phase"] as? String ?? "listening", text: command["text"] as? String)
   case "caption-hide": capsule.hide()
+  case "busy": voice.busy = command["on"] as? Bool ?? false
   case "chime":
     // Task outcome tones are switched on by the Host; previews from settings play regardless.
     earcons.play(Earcon(rawValue: command["name"] as? String ?? "done") ?? .done, force: true)

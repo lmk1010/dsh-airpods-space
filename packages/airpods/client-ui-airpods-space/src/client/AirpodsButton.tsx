@@ -43,6 +43,8 @@ export interface AirpodsButtonDeps {
   openLink: (target: 'aliyun-console' | 'aliyun-help') => void
   /** Task-finished chime in the headset. */
   chime: (name: 'done' | 'failed' | 'approval') => void
+  /** Tell the Host whether DSH is answering, so a press interrupts instead of listening. */
+  setBusy: (on: boolean) => void
   modelInfo: () => Promise<{ dir: string; bytes: number }>
   deleteModel: () => Promise<void>
   revealModel: () => void
@@ -112,7 +114,7 @@ const percent = (value: number | null): string => value === null ? '—' : `${va
 export function createAirpodsButton({ airpods, press, takeButton, connectDevice, openBluetoothSettings, openBluetoothPairing,
   requestMicrophone, openMicrophoneSettings, speak, stopSpeaking, setHeadGestures, setPreferences, cancelSession, prepareModel,
   cancelModelDownload, saveCloudKey, deviceImage, modelInfo, deleteModel, revealModel, cloudKeyStatus, deleteCloudKey, testCloud,
-  openLink, chime }: AirpodsButtonDeps) {
+  openLink, chime, setBusy }: AirpodsButtonDeps) {
   return function AirpodsButton({ inputActions, useInput, sessionId, t }: AirpodsButtonProps) {
     const view = use(airpods)
     const draft = useInput(state => state.draft)
@@ -195,17 +197,33 @@ export function createAirpodsButton({ airpods, press, takeButton, connectDevice,
       }
     }, [command, inputActions, sessionId])
 
+    // DSH is answering while the composer's primary button shows Stop (a square glyph).
+    useEffect(() => {
+      let busy = false
+      const sync = (): void => {
+        const now = document.querySelector('button[aria-label] svg rect[rx="3"]') !== null
+        if (now !== busy) { busy = now; setBusy(now) }
+      }
+      sync()
+      const observer = new MutationObserver(sync)
+      observer.observe(document.body, { childList: true, subtree: true })
+      return () => { observer.disconnect(); if (busy) setBusy(false) }
+    }, [])
+
     // Read each new reply once it has stopped changing, while the AirPods are worn.
     const readKeys = useRef<Set<string> | undefined>(undefined)
     const autoRead = view.snapshot?.preferences.autoRead ?? false
     const worn = view.snapshot?.pods?.inEar ?? false
     useEffect(() => {
       if (readKeys.current === undefined) { readKeys.current = new Set([latestReply()?.key ?? '']) }
+      // A freshly opened window renders old replies a moment later; treat anything seen while warming up as read.
+      const warmUntil = Date.now() + 4000
       const keys = readKeys.current
       if (!autoRead || !worn) return
       let lastText = '', stableSince = 0
       const timer = setInterval(() => {
         const reply = latestReply()
+        if (Date.now() < warmUntil && reply) { keys.add(reply.key); return }
         if (!reply || reply.text === '' || keys.has(reply.key)) return
         if (reply.text !== lastText) { lastText = reply.text; stableSince = Date.now(); return }
         if (Date.now() - stableSince < 2500) return
