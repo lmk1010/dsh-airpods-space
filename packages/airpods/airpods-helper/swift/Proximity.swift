@@ -22,8 +22,8 @@ struct ProximityConfig {
 final class Proximity: NSObject, CBCentralManagerDelegate {
   private var central: CBCentralManager!
   private let config: ProximityConfig
-  private var budsCandidate: Int?
-  private var budsStable: Int?
+  /// Per bud: the last "other bud in case" bit it sent, and the value confirmed by two of its adverts in a row.
+  private var otherSeen: [UUID: (value: Bool, confirmed: Bool)] = [:]
   private var tracked: (id: UUID, lidByte: UInt8, lastSeen: Date, lastReport: Date, lastOpen: Date, lidOpen: Bool, rssi: Int, inCase: Bool)?
   private var lastRaw = ""
   private var lastInOut = Date.distantPast
@@ -101,12 +101,16 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
     // 0x02: the advertising bud is in an ear. Case battery 0xF means the case is closed or out of range, so the
     // other bud's location is unknown and must not be read as "out of the case".
     let caseKnown = (b[9] & 0x0F) != 0x0F
-    let reportedBuds = ((status & 0x04) != 0 ? 1 : 0) + ((status & 0x10) != 0 ? 1 : 0)
-    // A single advert sometimes drops the "other bud in case" bit (seen on AirPods 4 right after the lid opens);
-    // accept a new count only after two adverts agree, so the card's artwork never flickers.
-    if budsStable == nil { budsStable = reportedBuds }
-    if reportedBuds == budsCandidate { budsStable = reportedBuds } else { budsCandidate = reportedBuds }
-    let budsInCase = budsStable ?? reportedBuds
+    // Each bud is authoritative about itself (0x04) and applies at once. Its "other bud in case" bit (0x10) can drop
+    // for one advert (seen on AirPods 4 right after the lid opens), so that bit applies only once the same bud has
+    // repeated it; per bud, because the two buds advertise in turn and briefly disagree.
+    let thisIn = (status & 0x04) != 0
+    let otherBit = (status & 0x10) != 0
+    let key = peripheral.identifier
+    let seen = otherSeen[key]
+    let otherIn = seen == nil || seen?.value == otherBit ? otherBit : (seen?.confirmed ?? otherBit)
+    otherSeen[key] = (otherBit, seen?.value == otherBit ? otherBit : otherIn)
+    let budsInCase = (thisIn ? 1 : 0) + (otherIn ? 1 : 0)
     let inCase = budsInCase > 0
     let inEar = (status & 0x02) != 0
     let lidOpen = (b[10] & 0x08) == 0
@@ -151,12 +155,12 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
       fields["state"] = "closed"; report(fields); return
     }
     // A bud went into an ear: report at once, it drives the worn animation.
-    if inEar != lastEar && now.timeIntervalSince(lastInOut) > 1.5 {
+    if inEar != lastEar && now.timeIntervalSince(lastInOut) > 0.4 {
       lastEar = inEar; lastInOut = now; current.lastReport = now
       fields["state"] = inEar ? "in-ear" : "out-of-ear"; report(fields); return
     }
     // One bud taken out or put back while the case is open: refresh the artwork at once.
-    if caseKnown && budsInCase != lastBuds && now.timeIntervalSince(lastInOut) > 1.5 {
+    if caseKnown && budsInCase != lastBuds && now.timeIntervalSince(lastInOut) > 0.4 {
       lastBuds = budsInCase; lastInOut = now; current.lastReport = now
       fields["state"] = "buds"; report(fields); return
     }
