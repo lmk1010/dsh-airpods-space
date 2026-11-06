@@ -1,7 +1,7 @@
 /** Speech recognition source choice with the Aliyun key field, shared by setup and settings. */
 import { useState } from 'react'
 import { Button, Input } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { Preferences } from '@dshub/airpods-space/types'
+import type { Preferences } from '@lmk1010/airpods-space/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { NS } from './locales.ts'
 import css from './SetupDialog.module.css'

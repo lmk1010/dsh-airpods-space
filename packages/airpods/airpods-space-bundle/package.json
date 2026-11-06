@@ -1,5 +1,5 @@
 {
-  "name": "@dshub/airpods-space-bundle",
+  "name": "@lmk1010/airpods-space-bundle",
   "description": "AirPods space: press your AirPods to talk to DSH, with live captions, battery card and local streaming recognition",
   "version": "0.2.2-rc.1",
   "type": "module",
@@ -31,11 +31,11 @@
     "@deepseek-ai/dsh-experimental-speech-to-text-sensevoice": "workspace:*",
     "@deepseek-ai/dsh-experimental-api-speech-to-text": "workspace:*",
     "@deepseek-ai/dsh-experimental-client-ui-voice-input": "workspace:*",
-    "@dshub/speech-streaming": "workspace:*",
-    "@dshub/speech-streaming-sherpa": "workspace:*",
-    "@dshub/airpods-space": "workspace:*",
-    "@dshub/client-ui-airpods-space": "workspace:*",
-    "@dshub/speech-streaming-aliyun": "workspace:*"
+    "@lmk1010/speech-streaming": "workspace:*",
+    "@lmk1010/speech-streaming-sherpa": "workspace:*",
+    "@lmk1010/airpods-space": "workspace:*",
+    "@lmk1010/client-ui-airpods-space": "workspace:*",
+    "@lmk1010/speech-streaming-aliyun": "workspace:*"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "workspace:~"
@@ -45,5 +45,14 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "icon": "./icon.svg"
+  "icon": "./icon.svg",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmk1010/dsh-airpods-space.git",
+    "directory": "packages/airpods/airpods-space-bundle"
+  },
+  "homepage": "https://github.com/lmk1010/dsh-airpods-space#readme"
 }

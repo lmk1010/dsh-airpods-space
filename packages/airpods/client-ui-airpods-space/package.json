@@ -1,5 +1,5 @@
 {
-  "name": "@dshub/client-ui-airpods-space",
+  "name": "@lmk1010/client-ui-airpods-space",
   "description": "Live AirPods captions above the composer; finished turns go into the draft or are sent",
   "version": "0.2.2-rc.1",
   "type": "module",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:~",
-    "@dshub/airpods-space": "workspace:*"
+    "@lmk1010/airpods-space": "workspace:*"
   },
   "dsh": {
     "client": {
@@ -51,5 +51,14 @@
   "scripts": {
     "bundle": "tsdown",
     "watch": "tsdown --watch"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmk1010/dsh-airpods-space.git",
+    "directory": "packages/airpods/client-ui-airpods-space"
+  },
+  "homepage": "https://github.com/lmk1010/dsh-airpods-space#readme"
 }

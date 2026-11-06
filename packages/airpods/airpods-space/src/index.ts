@@ -7,8 +7,8 @@ import z from '@deepseek-ai/schemastery'
 import { Remote, RemoteError, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import type {} from '@deepseek-ai/dsh-subprocess'
 import type {} from '@deepseek-ai/dsh-experimental-speech-to-text'
-import { Channel, type StreamingSession, type SpeechProviderId } from '@dshub/speech-streaming'
-import { helperAssets, helperExecutable } from '@dshub/airpods-helper'
+import { Channel, type StreamingSession, type SpeechProviderId } from '@lmk1010/speech-streaming'
+import { helperAssets, helperExecutable } from '@lmk1010/airpods-helper'
 import { HelperProcess, type HelperEvent } from './helper.ts'
 import { parseCommand, trailingInsert, trailingSend } from './commands.ts'
 import type { AirpodsSnapshot, AirpodsUpdate, CommandKind, GestureAction, Competitor, DeviceInfo, ModelState, PodsState, Preferences, TalkPhase, TranscriptUpdate } from './types.ts'
@@ -24,7 +24,7 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export interface Config {
-  /** Helper executable; defaults to the binary shipped in `@dshub/airpods-helper`. */
+  /** Helper executable; defaults to the binary shipped in `@lmk1010/airpods-helper`. */
   executable?: string
   /** Directory of product renders for the connect card; defaults to the helper package's `assets`. */
   assets?: string

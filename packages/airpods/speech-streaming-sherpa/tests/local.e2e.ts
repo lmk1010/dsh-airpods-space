@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { Context } from '@deepseek-ai/cordis'
 import LocalSubprocess from '@deepseek-ai/dsh-subprocess-local'
 import SpeechToText from '@deepseek-ai/dsh-experimental-speech-to-text'
-import SpeechStreaming, { type StreamEvent } from '@dshub/speech-streaming'
+import SpeechStreaming, { type StreamEvent } from '@lmk1010/speech-streaming'
 import { expect, it, vi } from 'vitest'
 import * as Sherpa from '../src/index.ts'
 

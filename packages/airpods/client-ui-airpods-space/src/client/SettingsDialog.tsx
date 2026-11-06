@@ -5,7 +5,7 @@
  */
 import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconCloseOutlineRegular, IconMicrophoneOutlineRegular, Menu, Modal, SegmentedControl, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { AirpodsSnapshot, DeviceInfo, GestureAction, Preferences } from '@dshub/airpods-space/types'
+import type { AirpodsSnapshot, DeviceInfo, GestureAction, Preferences } from '@lmk1010/airpods-space/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { AirpodsKey, NS } from './locales.ts'
 import { CloudKeyField } from './SourcePicker.tsx'

@@ -6,8 +6,8 @@ import { execFile } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import { Channel, type SpeechProviderId, type StreamEvent, type StreamingProvider, type StreamingSession, type StreamOptions } from '@dshub/speech-streaming'
-import type {} from '@dshub/speech-streaming'
+import { Channel, type SpeechProviderId, type StreamEvent, type StreamingProvider, type StreamingSession, type StreamOptions } from '@lmk1010/speech-streaming'
+import type {} from '@lmk1010/speech-streaming'
 
 export const name = 'speech-streaming-aliyun'
 export const inject = ['speechStreaming']

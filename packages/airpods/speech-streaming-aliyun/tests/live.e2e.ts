@@ -1,7 +1,7 @@
 /** Opt-in live Aliyun recognition (needs a key in DASHSCOPE_API_KEY or the macOS Keychain and DSH_ALIYUN_E2E_WAV). */
 import { readFileSync } from 'node:fs'
 import { expect, it } from 'vitest'
-import type { StreamEvent } from '@dshub/speech-streaming'
+import type { StreamEvent } from '@lmk1010/speech-streaming'
 import { AliyunRealtime, Config } from '../src/index.ts'
 
 const wav = process.env.DSH_ALIYUN_E2E_WAV

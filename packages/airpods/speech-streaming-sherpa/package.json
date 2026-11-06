@@ -1,5 +1,5 @@
 {
-  "name": "@dshub/speech-streaming-sherpa",
+  "name": "@lmk1010/speech-streaming-sherpa",
   "description": "Local streaming Paraformer (Chinese/English) recognition through sherpa-onnx in a dedicated process",
   "version": "0.2.2-rc.1",
   "type": "module",
@@ -31,13 +31,22 @@
     "@deepseek-ai/cordis": "workspace:~",
     "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*",
     "@deepseek-ai/dsh-subprocess": "workspace:*",
-    "@dshub/speech-streaming": "workspace:*"
+    "@lmk1010/speech-streaming": "workspace:*"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:~",
     "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*",
     "@deepseek-ai/dsh-subprocess": "workspace:*",
-    "@dshub/speech-streaming": "workspace:*",
+    "@lmk1010/speech-streaming": "workspace:*",
     "@deepseek-ai/dsh-subprocess-local": "workspace:*"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmk1010/dsh-airpods-space.git",
+    "directory": "packages/airpods/speech-streaming-sherpa"
+  },
+  "homepage": "https://github.com/lmk1010/dsh-airpods-space#readme"
 }

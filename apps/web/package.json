@@ -77,6 +77,6 @@
   },
   "dependencies": {
     "@deepseek-ai/dsh-message-quotes": "workspace:*",
-    "@dshub/airpods-space-bundle": "workspace:*"
+    "@lmk1010/airpods-space-bundle": "workspace:*"
   }
 }

@@ -540,7 +540,7 @@ importers:
       '@deepseek-ai/schemastery':
         specifier: link:../../vendor/schemastery
         version: link:../../vendor/schemastery
-      '@dshub/airpods-space-bundle':
+      '@lmk1010/airpods-space-bundle':
         specifier: workspace:*
         version: link:../../packages/airpods/airpods-space-bundle
       commander:
@@ -970,7 +970,7 @@ importers:
       '@deepseek-ai/dsh-message-quotes':
         specifier: workspace:*
         version: link:../../packages/session/message-quotes
-      '@dshub/airpods-space-bundle':
+      '@lmk1010/airpods-space-bundle':
         specifier: workspace:*
         version: link:../../packages/airpods/airpods-space-bundle
     devDependencies:
@@ -1342,7 +1342,7 @@ importers:
       '@deepseek-ai/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
-      '@dshub/airpods-helper':
+      '@lmk1010/airpods-helper':
         specifier: workspace:*
         version: link:../airpods-helper
       zod:
@@ -1364,7 +1364,7 @@ importers:
       '@deepseek-ai/dsh-typert-protocol':
         specifier: workspace:*
         version: link:../../typert/protocol
-      '@dshub/speech-streaming':
+      '@lmk1010/speech-streaming':
         specifier: workspace:*
         version: link:../speech-streaming
 
@@ -1385,19 +1385,19 @@ importers:
       '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice':
         specifier: workspace:*
         version: link:../../experimental/speech-to-text-sensevoice
-      '@dshub/airpods-space':
+      '@lmk1010/airpods-space':
         specifier: workspace:*
         version: link:../airpods-space
-      '@dshub/client-ui-airpods-space':
+      '@lmk1010/client-ui-airpods-space':
         specifier: workspace:*
         version: link:../client-ui-airpods-space
-      '@dshub/speech-streaming':
+      '@lmk1010/speech-streaming':
         specifier: workspace:*
         version: link:../speech-streaming
-      '@dshub/speech-streaming-aliyun':
+      '@lmk1010/speech-streaming-aliyun':
         specifier: workspace:*
         version: link:../speech-streaming-aliyun
-      '@dshub/speech-streaming-sherpa':
+      '@lmk1010/speech-streaming-sherpa':
         specifier: workspace:*
         version: link:../speech-streaming-sherpa
 
@@ -1406,7 +1406,7 @@ importers:
       '@deepseek-ai/cordis':
         specifier: workspace:~
         version: link:../../../vendor/cordis
-      '@dshub/airpods-space':
+      '@lmk1010/airpods-space':
         specifier: workspace:*
         version: link:../airpods-space
 
@@ -1432,7 +1432,7 @@ importers:
       '@deepseek-ai/cordis':
         specifier: workspace:~
         version: link:../../../vendor/cordis
-      '@dshub/speech-streaming':
+      '@lmk1010/speech-streaming':
         specifier: workspace:*
         version: link:../speech-streaming
 
@@ -1463,7 +1463,7 @@ importers:
       '@deepseek-ai/dsh-subprocess-local':
         specifier: workspace:*
         version: link:../../subprocess/subprocess-local
-      '@dshub/speech-streaming':
+      '@lmk1010/speech-streaming':
         specifier: workspace:*
         version: link:../speech-streaming
 

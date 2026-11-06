@@ -1,5 +1,5 @@
 {
-  "name": "@dshub/airpods-helper",
+  "name": "@lmk1010/airpods-helper",
   "description": "macOS native helper: AirPods proximity, connections, connect card and press-to-talk capture",
   "version": "0.2.2-rc.1",
   "type": "module",
@@ -15,12 +15,22 @@
     "lib/index.js",
     "lib/types/**/*.d.ts",
     "bin/**/*",
-    "assets/*.png"
+    "assets/*.png",
+    "assets/thumb/*.png"
   ],
   "scripts": {
     "build:native": "sh scripts/build.sh"
   },
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "lib/types/index.d.ts"
+  "types": "lib/types/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmk1010/dsh-airpods-space.git",
+    "directory": "packages/airpods/airpods-helper"
+  },
+  "homepage": "https://github.com/lmk1010/dsh-airpods-space#readme"
 }

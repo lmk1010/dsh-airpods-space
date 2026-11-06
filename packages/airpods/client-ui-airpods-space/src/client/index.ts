@@ -1,6 +1,6 @@
 /** Browser entry for the AirPods space Remote contribution and composer dock. */
 import type { Context } from '@deepseek-ai/cordis'
-import airpodsRemote from '@dshub/airpods-space/remote'
+import airpodsRemote from '@lmk1010/airpods-space/remote'
 import { mountAirpodsSpace } from './mount.ts'
 
 export { inject } from './mount.ts'

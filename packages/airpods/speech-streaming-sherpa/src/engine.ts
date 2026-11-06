@@ -1,6 +1,6 @@
 /** sherpa-onnx streaming Paraformer decoding, confined to the recognition process. */
 import { createRequire } from 'node:module'
-import type { StreamEvent } from '@dshub/speech-streaming/types'
+import type { StreamEvent } from '@lmk1010/speech-streaming/types'
 import type { Config, ModelPaths } from './config.ts'
 
 interface OnlineStream {

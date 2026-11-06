@@ -13,19 +13,19 @@
     - id: ui-voice-input
       name: '@deepseek-ai/dsh-experimental-client-ui-voice-input'
     - id: speech-streaming
-      name: '@dshub/speech-streaming'
+      name: '@lmk1010/speech-streaming'
       config:
         defaultProvider: paraformer-streaming-local
         refineProvider: sensevoice-local
     - id: speech-streaming-sherpa
-      name: '@dshub/speech-streaming-sherpa'
+      name: '@lmk1010/speech-streaming-sherpa'
       config:
         dataRoot: !!js dshHomePath('speech-streaming', 'paraformer')
     - id: speech-streaming-aliyun
-      name: '@dshub/speech-streaming-aliyun'
+      name: '@lmk1010/speech-streaming-aliyun'
     - id: airpods-space
-      name: '@dshub/airpods-space'
+      name: '@lmk1010/airpods-space'
       config:
         modelDir: !!js dshHomePath('speech-streaming', 'paraformer', 'models')
     - id: ui-airpods-space
-      name: '@dshub/client-ui-airpods-space'
+      name: '@lmk1010/client-ui-airpods-space'

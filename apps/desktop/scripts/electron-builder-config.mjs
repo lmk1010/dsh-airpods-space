@@ -81,7 +81,7 @@ export function createElectronBuilderConfig(
     // Both architectures ship: they form one notarized payload whose manifest staging verifies as a whole.
     '**/node_modules/@deepseek-ai/dsh-experimental-cua-macos/native/bin/**/*',
     // The AirPods helper is spawned as a process and reads its renders from disk.
-    '**/node_modules/@dshub/airpods-helper/{bin,assets}/**']
+    '**/node_modules/@lmk1010/airpods-helper/{bin,assets}/**']
   const windowsSigner = packagesWindows && !unsigned
     ? createWindowsTokenSigner({
         certificateFile: env.DSH_DESKTOP_WINDOWS_CER_FILE,

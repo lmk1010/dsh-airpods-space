@@ -1,5 +1,5 @@
 {
-  "name": "@dshub/airpods-space",
+  "name": "@lmk1010/airpods-space",
   "description": "Press your AirPods to talk to DSH: native helper lifecycle, streaming recognition and the airpods Remote",
   "version": "0.2.2-rc.1",
   "type": "module",
@@ -37,22 +37,31 @@
   "license": "MIT",
   "dependencies": {
     "@deepseek-ai/schemastery": "workspace:~",
-    "@dshub/airpods-helper": "workspace:*",
+    "@lmk1010/airpods-helper": "workspace:*",
     "zod": "4.4.3"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "workspace:~",
     "@deepseek-ai/dsh-subprocess": "workspace:*",
     "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@dshub/speech-streaming": "workspace:*",
+    "@lmk1010/speech-streaming": "workspace:*",
     "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:~",
     "@deepseek-ai/dsh-subprocess": "workspace:*",
     "@deepseek-ai/dsh-typert-protocol": "workspace:*",
-    "@dshub/speech-streaming": "workspace:*",
+    "@lmk1010/speech-streaming": "workspace:*",
     "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*",
     "@deepseek-ai/dsh-subprocess-local": "workspace:*"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmk1010/dsh-airpods-space.git",
+    "directory": "packages/airpods/airpods-space"
+  },
+  "homepage": "https://github.com/lmk1010/dsh-airpods-space#readme"
 }

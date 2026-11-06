@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { Button, Modal } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { AirpodsSnapshot, Preferences } from '@dshub/airpods-space/types'
+import type { AirpodsSnapshot, Preferences } from '@lmk1010/airpods-space/types'
 import type { NS } from './locales.ts'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import { SourcePicker } from './SourcePicker.tsx'

@@ -1,5 +1,5 @@
 {
-  "name": "@dshub/speech-streaming",
+  "name": "@lmk1010/speech-streaming",
   "description": "Streaming speech recognition registry with partial results and an optional batch second pass",
   "version": "0.2.2-rc.1",
   "type": "module",
@@ -37,5 +37,14 @@
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:~",
     "@deepseek-ai/dsh-experimental-speech-to-text": "workspace:*"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmk1010/dsh-airpods-space.git",
+    "directory": "packages/airpods/speech-streaming"
+  },
+  "homepage": "https://github.com/lmk1010/dsh-airpods-space#readme"
 }
