@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>com.dshub.airpods-helper</string>
+  <key>CFBundleName</key><string>DSH AirPods</string>
+  <key>NSBluetoothAlwaysUsageDescription</key><string>Detect when your AirPods case opens and show their battery.</string>
+  <key>NSMicrophoneUsageDescription</key><string>Hear what you say after you press your AirPods.</string>
+  <key>NSSpeechRecognitionUsageDescription</key><string>Turn what you say into text on this Mac.</string>
+  <key>NSMotionUsageDescription</key><string>Nod or shake your head to answer DSH.</string>
+</dict></plist>

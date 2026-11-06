@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib/types"
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    { "path": "../../../vendor/schemastery" },
+    { "path": "../../util/timeout" },
+    { "path": "../../../vendor/cordis" },
+    { "path": "../../experimental/speech-to-text" },
+    { "path": "../../subprocess/subprocess" },
+    { "path": "../speech-streaming" }
+  ]
+}

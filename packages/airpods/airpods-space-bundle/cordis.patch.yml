@@ -1,0 +1,31 @@
+# AirPods space: a superset of the official voice input bundle (enable one of the two, not both).
+- insert:
+    - id: speech-to-text
+      name: '@deepseek-ai/dsh-experimental-speech-to-text'
+      config:
+        defaultProvider: paraformer-streaming-local
+    - id: speech-to-text-sensevoice
+      name: '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice'
+      config:
+        dataRoot: !!js dshHomePath('speech-to-text', 'sensevoice')
+    - id: api-speech-to-text
+      name: '@deepseek-ai/dsh-experimental-api-speech-to-text'
+    - id: ui-voice-input
+      name: '@deepseek-ai/dsh-experimental-client-ui-voice-input'
+    - id: speech-streaming
+      name: '@dshub/speech-streaming'
+      config:
+        defaultProvider: paraformer-streaming-local
+        refineProvider: sensevoice-local
+    - id: speech-streaming-sherpa
+      name: '@dshub/speech-streaming-sherpa'
+      config:
+        dataRoot: !!js dshHomePath('speech-streaming', 'paraformer')
+    - id: speech-streaming-aliyun
+      name: '@dshub/speech-streaming-aliyun'
+    - id: airpods-space
+      name: '@dshub/airpods-space'
+      config:
+        modelDir: !!js dshHomePath('speech-streaming', 'paraformer', 'models')
+    - id: ui-airpods-space
+      name: '@dshub/client-ui-airpods-space'

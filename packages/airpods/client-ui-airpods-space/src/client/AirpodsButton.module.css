@@ -1,0 +1,131 @@
+/* Same footprint as the microphone trigger next to it. */
+.anchor { display: inline-flex; flex: none; }
+
+.trigger {
+  position: relative;
+  width: 28px;
+  padding: 0;
+  flex: none;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.trigger[data-state='ready'] { color: var(--dsw-alias-label-primary); }
+/* Hover lifts the earbuds a little; while listening they bob softly. */
+.glyph { transition: transform 0.2s ease; }
+.trigger:hover .glyph { transform: translateY(-1px); }
+.trigger[data-state='talking'] .glyph { animation: bob 1.4s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+.trigger[data-state='preparing'] { color: var(--dsw-alias-label-primary); }
+.trigger[data-state='disconnected'], .trigger[data-state='notWorn'] { color: var(--dsw-alias-state-warn-primary); }
+.trigger[data-state='yielded'] { color: var(--dsw-alias-label-tertiary); }
+.trigger[data-state='blocked'] { color: var(--dsw-alias-state-error-primary); }
+.trigger[data-state='talking'] { color: var(--dsw-alias-state-success-primary); }
+.trigger[data-state='sent'] { color: var(--dsw-alias-state-success-primary); animation: pop 0.45s ease-out; }
+.trigger[data-state='recognizing'] { color: var(--dsw-alias-label-primary); }
+.trigger[data-state='recognizing'] svg { animation: glyph-breathe 1.6s ease-in-out infinite; }
+.trigger[data-state='connecting'] { color: var(--dsw-alias-label-primary); }
+.trigger[data-state='connecting'] svg { animation: glyph-breathe 1s ease-in-out infinite; }
+.trigger[data-state='connecting'] .halo { background: var(--dsw-alias-label-primary); }
+.trigger[data-state='failed'] { color: var(--dsw-alias-state-error-primary); animation: shake 0.4s ease-in-out; }
+.trigger[data-pop='true'] { animation: pop 0.45s ease-out; }
+
+.halo {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-success-primary);
+  opacity: 0.18;
+  animation: breathe 1.2s ease-in-out infinite;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke: var(--dsw-alias-state-business-primary);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* After speech, a thin ring empties over the end-of-turn silence; speaking again restarts it. */
+.countdown {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke: var(--dsw-alias-state-success-primary);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  opacity: 0.85;
+  animation: countdown linear forwards;
+}
+@keyframes countdown { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 1; } }
+
+/* Dictated words wait in the draft for "send". */
+.pending {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-business-primary);
+  box-shadow: 0 0 0 1.5px var(--dsw-specific-menu);
+  animation: pending-in 0.3s ease-out;
+}
+@keyframes pending-in { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* Menu rows: name over status, like the model selector's two-line entries. */
+.device { display: flex; flex-direction: column; min-width: 0; }
+.deviceName { font-size: 13px; line-height: 18px; color: var(--dsw-alias-label-primary); }
+.deviceMeta { font-size: 12px; line-height: 16px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
+.menuGlyph { display: inline-flex; color: var(--dsw-alias-state-warn-primary); }
+.menuGlyph[data-connected='true'] { color: var(--dsw-alias-label-primary); }
+
+.lowBattery {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-error-primary);
+  box-shadow: 0 0 0 1.5px var(--dsw-specific-menu);
+}
+
+.choice { display: inline-flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 200px; }
+.check { display: inline-flex; color: var(--dsw-alias-label-primary); visibility: hidden; }
+.check[data-on='true'] { visibility: visible; }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(0.8); opacity: 0.12; }
+  50% { transform: scale(1.12); opacity: 0.28; }
+}
+
+@keyframes glyph-breathe {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halo, .trigger, .trigger svg, .pending, .glyph { animation: none !important; transition: none !important; }
+  .countdown { display: none; }
+}

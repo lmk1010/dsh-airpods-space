@@ -540,6 +540,9 @@ importers:
       '@deepseek-ai/schemastery':
         specifier: link:../../vendor/schemastery
         version: link:../../vendor/schemastery
+      '@dshub/airpods-space-bundle':
+        specifier: workspace:*
+        version: link:../../packages/airpods/airpods-space-bundle
       commander:
         specifier: ^15.0.0
         version: 15.0.0
@@ -967,6 +970,9 @@ importers:
       '@deepseek-ai/dsh-message-quotes':
         specifier: workspace:*
         version: link:../../packages/session/message-quotes
+      '@dshub/airpods-space-bundle':
+        specifier: workspace:*
+        version: link:../../packages/airpods/airpods-space-bundle
     devDependencies:
       '@deepseek-ai/cordis-plugin-group':
         specifier: workspace:~
@@ -1328,6 +1334,138 @@ importers:
       '@deepseek-ai/dsh-user-approval':
         specifier: workspace:*
         version: link:../../interaction/user-approval
+
+  packages/airpods/airpods-helper: {}
+
+  packages/airpods/airpods-space:
+    dependencies:
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+      '@dshub/airpods-helper':
+        specifier: workspace:*
+        version: link:../airpods-helper
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:~
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-experimental-speech-to-text':
+        specifier: workspace:*
+        version: link:../../experimental/speech-to-text
+      '@deepseek-ai/dsh-subprocess':
+        specifier: workspace:*
+        version: link:../../subprocess/subprocess
+      '@deepseek-ai/dsh-subprocess-local':
+        specifier: workspace:*
+        version: link:../../subprocess/subprocess-local
+      '@deepseek-ai/dsh-typert-protocol':
+        specifier: workspace:*
+        version: link:../../typert/protocol
+      '@dshub/speech-streaming':
+        specifier: workspace:*
+        version: link:../speech-streaming
+
+  packages/airpods/airpods-space-bundle:
+    dependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:~
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-experimental-api-speech-to-text':
+        specifier: workspace:*
+        version: link:../../experimental/api-speech-to-text
+      '@deepseek-ai/dsh-experimental-client-ui-voice-input':
+        specifier: workspace:*
+        version: link:../../experimental/client-ui-voice-input
+      '@deepseek-ai/dsh-experimental-speech-to-text':
+        specifier: workspace:*
+        version: link:../../experimental/speech-to-text
+      '@deepseek-ai/dsh-experimental-speech-to-text-sensevoice':
+        specifier: workspace:*
+        version: link:../../experimental/speech-to-text-sensevoice
+      '@dshub/airpods-space':
+        specifier: workspace:*
+        version: link:../airpods-space
+      '@dshub/client-ui-airpods-space':
+        specifier: workspace:*
+        version: link:../client-ui-airpods-space
+      '@dshub/speech-streaming':
+        specifier: workspace:*
+        version: link:../speech-streaming
+      '@dshub/speech-streaming-aliyun':
+        specifier: workspace:*
+        version: link:../speech-streaming-aliyun
+      '@dshub/speech-streaming-sherpa':
+        specifier: workspace:*
+        version: link:../speech-streaming-sherpa
+
+  packages/airpods/client-ui-airpods-space:
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:~
+        version: link:../../../vendor/cordis
+      '@dshub/airpods-space':
+        specifier: workspace:*
+        version: link:../airpods-space
+
+  packages/airpods/speech-streaming:
+    dependencies:
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:~
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-experimental-speech-to-text':
+        specifier: workspace:*
+        version: link:../../experimental/speech-to-text
+
+  packages/airpods/speech-streaming-aliyun:
+    dependencies:
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:~
+        version: link:../../../vendor/cordis
+      '@dshub/speech-streaming':
+        specifier: workspace:*
+        version: link:../speech-streaming
+
+  packages/airpods/speech-streaming-sherpa:
+    dependencies:
+      '@deepseek-ai/dsh-timeout':
+        specifier: workspace:*
+        version: link:../../util/timeout
+      '@deepseek-ai/schemastery':
+        specifier: link:../../../vendor/schemastery
+        version: link:../../../vendor/schemastery
+      sherpa-onnx-node:
+        specifier: 1.13.8
+        version: 1.13.8
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:~
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-experimental-speech-to-text':
+        specifier: workspace:*
+        version: link:../../experimental/speech-to-text
+      '@deepseek-ai/dsh-subprocess':
+        specifier: workspace:*
+        version: link:../../subprocess/subprocess
+      '@deepseek-ai/dsh-subprocess-local':
+        specifier: workspace:*
+        version: link:../../subprocess/subprocess-local
+      '@dshub/speech-streaming':
+        specifier: workspace:*
+        version: link:../speech-streaming
 
   packages/api/account-controller:
     dependencies:

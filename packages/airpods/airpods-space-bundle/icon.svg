@@ -1,0 +1,11 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M11.2 7.5c-2.9 0-5.2 2.3-5.2 5.1 0 2.4 1.7 4.4 4 4.9v10.4a1.9 1.9 0 0 0 3.8 0V12.6c0-.3 0-.6-.1-.9-.2-2.4-1.8-4.2-2.5-4.2Z M24.8 7.5c2.9 0 5.2 2.3 5.2 5.1 0 2.4-1.7 4.4-4 4.9v10.4a1.9 1.9 0 0 1-3.8 0V12.6c0-.3 0-.6.1-.9.2-2.4 1.8-4.2 2.5-4.2Z" fill="url(#airpods)"/>
+  <circle cx="11.1" cy="12.6" r="1.3" fill="#F5F6FC"/>
+  <circle cx="24.9" cy="12.6" r="1.3" fill="#F5F6FC"/>
+  <defs>
+    <linearGradient id="airpods" x1="6" y1="8" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67C7FE"/>
+      <stop offset="1" stop-color="#3F77D8"/>
+    </linearGradient>
+  </defs>
+</svg>
