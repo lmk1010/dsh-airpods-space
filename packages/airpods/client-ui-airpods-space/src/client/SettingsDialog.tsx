@@ -242,7 +242,7 @@ function TalkPage({ snapshot, preferences, onPreferences, onSetup, t }: Settings
   const doubleTap = doubleTapModel({ snapshot })
   return (<>
     <Group title={t('gesture.title')}>
-      <Row label={t(doubleTap ? 'gesture.tapTalk' : 'gesture.pressOnce')} detail={t('gesture.talkAction')} />
+      <Row label={t(doubleTap ? 'gesture.tapTalk' : 'gesture.pressOnce')} detail={t(doubleTap ? 'gesture.tapTalkAction' : 'gesture.talkAction')} />
       <Row label={t(doubleTap ? 'gesture.tapNext' : 'gesture.pressTwice')} detail={doubleTap ? t('gesture.tapNextDetail') : undefined}>
         <ActionPicker value={preferences.nextAction} t={t}
           onChange={(nextAction) => { onPreferences({ ...preferences, nextAction }) }} />
