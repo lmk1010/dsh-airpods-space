@@ -59,6 +59,10 @@ var cardProductId: UInt16?
 func offerConnect(_ fields: [String: Any]) {
   guard let text = fields["productId"] as? String, let id = UInt16(text.dropFirst(2), radix: 16) else { return }
   cardProductId = id
+  if fields["unpaired"] as? Bool == true {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { if cardProductId == id { popup.setConnect("pair") } }
+    return
+  }
   DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
     guard cardProductId == id else { return }
     DispatchQueue.global(qos: .userInitiated).async {
@@ -112,7 +116,8 @@ func snapshot(_ fields: [String: Any]) -> PodsSnapshot {
   return PodsSnapshot(model: fields["model"] as? String ?? "unknown", name: fields["name"] as? String ?? "AirPods",
     left: fields["left"] as? Int, right: fields["right"] as? Int, caseLevel: fields["case"] as? Int,
     chargingLeft: charging["left"] ?? false, chargingRight: charging["right"] ?? false, chargingCase: charging["case"] ?? false,
-    gesture: fields["gesture"] as? String ?? "double-tap", caseSide: fields["caseSide"] as? String ?? "both")
+    gesture: fields["gesture"] as? String ?? "double-tap", caseSide: fields["caseSide"] as? String ?? "both",
+    unpaired: fields["unpaired"] as? Bool ?? false)
 }
 
 /// Latest in-ear state from adverts.

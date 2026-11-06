@@ -15,6 +15,8 @@ struct PodsSnapshot: Equatable {
   var gesture = "double-tap"
   /// Buds in the case: both, left, right, none or unknown.
   var caseSide = "both"
+  /// Never paired with this Mac: the card offers pairing instead of connecting.
+  var unpaired = false
 }
 
 final class PopupModel: ObservableObject {
@@ -330,11 +332,13 @@ struct PopupCard: View {
     case "connecting": return "正在连接…"
     case "connected": return "已连接到这台 Mac"
     case "failed": return "没连上，再试一次"
+    case "pair": return "在蓝牙设置里配对"
     default: return model.connectName.isEmpty ? "连接到这台 Mac" : "连接「\(model.connectName)」到这台 Mac"
     }
   }
 
   private var hint: String {
+    if model.pods.unpaired { return "这副耳机还没和这台 Mac 配对：按住充电盒上的按钮，直到灯闪白光" }
     if model.worn {
       switch model.pods.gesture {
       case "press": return "已连接 · 捏一下耳机柄，和 DSH 说话"
@@ -436,6 +440,10 @@ final class Popup {
   }
 
   private func connectTapped() {
+    if model.connect == "pair" {
+      NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.BluetoothSettings")!)
+      hide(reason: "pair"); return
+    }
     guard model.connect == "available" || model.connect == "failed" else { return }
     setConnect("connecting")
     hideTimer?.invalidate()

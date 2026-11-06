@@ -6,10 +6,13 @@
 // closes, so a close is often never observed. An open is reported when, with the buds in the case and the lid open,
 // (a) the lid byte differs from the last one seen, or (b) the pod reappears after an advert gap.
 import CoreBluetooth
+
+let traceAdverts = ProcessInfo.processInfo.environment["DSH_AIRPODS_TRACE"] == "1"
 import Foundation
 
 struct ProximityConfig {
   var minRssi = -85              // weaker adverts belong to someone else's AirPods across the room
+  var unpairedRssi = -50         // unpaired AirPods must be this close (about an arm's length) to show a card
   var gapSeconds = 2.5           // adverts arrive every ~0.1–1 s while the lid is open; a gap means it was closed
   var goneSeconds = 12.0
   var nearReportSeconds = 10.0
@@ -19,6 +22,8 @@ struct ProximityConfig {
 final class Proximity: NSObject, CBCentralManagerDelegate {
   private var central: CBCentralManager!
   private let config: ProximityConfig
+  private var budsCandidate: Int?
+  private var budsStable: Int?
   private var tracked: (id: UUID, lidByte: UInt8, lastSeen: Date, lastReport: Date, lastOpen: Date, lidOpen: Bool, rssi: Int, inCase: Bool)?
   private var lastRaw = ""
   private var lastInOut = Date.distantPast
@@ -72,6 +77,11 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
     let b = [UInt8](data)
     guard b[0] == 0x4C, b[1] == 0x00, b[2] == 0x07 else { return }
     let signal = rssi.intValue
+    // DSH_AIRPODS_TRACE=1 records every proximity advert, paired or not, for diagnosing new models.
+    if traceAdverts {
+      emit("advert", ["raw": b.prefix(min(b.count, 27)).map { String(format: "%02x", $0) }.joined(), "rssi": signal,
+                      "model": String(format: "0x%04X", UInt16(b[6]) << 8 | UInt16(b[5])), "peripheral": peripheral.identifier.uuidString.prefix(8)])
+    }
     guard signal < 0, signal >= config.minRssi else { return }
     let now = Date()
     // Follow one pair: switch only when another pair is clearly closer.
@@ -79,7 +89,10 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
        now.timeIntervalSince(current.lastSeen) < config.gapSeconds, signal < current.rssi + 10 { return }
 
     let model = UInt16(b[6]) << 8 | UInt16(b[5])
-    if !pairedModels.isEmpty && !pairedModels.contains(model) { return }
+    // AirPods this Mac has never paired (someone else's, or new): like iPhone's setup card, only when held right next
+    // to the Mac, so a stranger's case across the room never pops up.
+    let unpaired = !pairedModels.contains(model)
+    if unpaired && signal < config.unpairedRssi { return }
     let status = b[7]
     let flip = (status & 0x20) == 0
     let hi = b[8] >> 4, lo = b[8] & 0x0F
@@ -88,7 +101,11 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
     // 0x02: the advertising bud is in an ear. Case battery 0xF means the case is closed or out of range, so the
     // other bud's location is unknown and must not be read as "out of the case".
     let caseKnown = (b[9] & 0x0F) != 0x0F
-    let budsInCase = ((status & 0x04) != 0 ? 1 : 0) + ((status & 0x10) != 0 ? 1 : 0)
+    let reportedBuds = ((status & 0x04) != 0 ? 1 : 0) + ((status & 0x10) != 0 ? 1 : 0)
+    // A single advert sometimes drops the "other bud in case" bit (seen on AirPods 4 right after the lid opens);
+    // accept a new count only after two adverts agree, so the card's artwork never flickers.
+    if reportedBuds == budsCandidate { budsStable = reportedBuds } else { budsCandidate = reportedBuds }
+    let budsInCase = budsStable ?? reportedBuds
     let inCase = budsInCase > 0
     let inEar = (status & 0x02) != 0
     let lidOpen = (b[10] & 0x08) == 0
@@ -99,7 +116,7 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
       // Flipped (bit 0x20 clear): the high nibble is the left bud (OpenPods/librepods layout; confirmed with a dead left bud).
       "left": pct(flip ? hi : lo), "right": pct(flip ? lo : hi), "case": pct(b[9] & 0x0F),
       "charging": ["left": chargingLeft, "right": chargingRight, "case": (charge & 0x4) != 0],
-      "inCase": inCase, "budsInCase": caseKnown ? budsInCase : NSNull(), "inEar": inEar, "lidOpen": lidOpen, "rssi": signal,
+      "unpaired": unpaired, "inCase": inCase, "budsInCase": caseKnown ? budsInCase : NSNull(), "inEar": inEar, "lidOpen": lidOpen, "rssi": signal,
       "raw": b.prefix(12).map { String(format: "%02x", $0) }.joined(),
     ]) { $1 }
 
