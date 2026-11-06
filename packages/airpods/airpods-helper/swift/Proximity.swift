@@ -104,6 +104,7 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
     let reportedBuds = ((status & 0x04) != 0 ? 1 : 0) + ((status & 0x10) != 0 ? 1 : 0)
     // A single advert sometimes drops the "other bud in case" bit (seen on AirPods 4 right after the lid opens);
     // accept a new count only after two adverts agree, so the card's artwork never flickers.
+    if budsStable == nil { budsStable = reportedBuds }
     if reportedBuds == budsCandidate { budsStable = reportedBuds } else { budsCandidate = reportedBuds }
     let budsInCase = budsStable ?? reportedBuds
     let inCase = budsInCase > 0
