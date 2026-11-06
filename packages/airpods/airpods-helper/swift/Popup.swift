@@ -98,16 +98,32 @@ struct WornArtwork: View {
   var model: String
   @State private var out = false
   @State private var check = 0.0
+  @State private var halo = false
   @State private var float = false
   var body: some View {
     let family = Art.family(model)
+    let single = family == "airpods-max"
     ZStack {
-      if let image = Art.image(family == "airpods-max" ? family : "\(family)-buds") {
+      // one soft green ring that grows and fades as the check lands
+      Circle().stroke(Color.green.opacity(halo ? 0 : 0.55), lineWidth: 2)
+        .frame(width: 34, height: 34).scaleEffect(halo ? 2.6 : 1).offset(y: 72)
+      if single, let image = Art.image(family) {
         Image(nsImage: image).resizable().interpolation(.high).scaledToFit()
-          .frame(width: 180, height: 150)
-          .scaleEffect(out ? 1 : 0.55)
-          .offset(y: out ? (float ? -16 : -10) : 30)
-          .opacity(out ? 1 : 0)
+          .frame(width: 160, height: 140).scaleEffect(out ? 1 : 0.6).offset(y: out ? (float ? -14 : -8) : 30).opacity(out ? 1 : 0)
+      } else {
+        // The two buds rise from where the case sits, part slightly, then settle and float in step.
+        ForEach(["left", "right"], id: \.self) { side in
+          let sign: CGFloat = side == "left" ? -1 : 1
+          if let image = Art.bud(family, side: side) {
+            Image(nsImage: image).resizable().interpolation(.high).scaledToFit()
+              .frame(width: 84, height: 132)
+              .rotationEffect(.degrees(out ? Double(sign) * 6 : Double(sign) * -8))
+              .scaleEffect(out ? 1 : 0.5)
+              .offset(x: out ? sign * 46 : sign * 16, y: out ? (float ? -16 : -10) : 40)
+              .opacity(out ? 1 : 0)
+              .animation(.spring(response: 0.5, dampingFraction: 0.72).delay(side == "left" ? 0 : 0.06), value: out)
+          }
+        }
       }
       ZStack {
         Circle().fill(Color.green).frame(width: 34, height: 34).scaleEffect(check > 0 ? 1 : 0.2).opacity(check > 0 ? 1 : 0)
@@ -118,9 +134,12 @@ struct WornArtwork: View {
     }
     .frame(height: 180)
     .onAppear {
-      withAnimation(.spring(response: 0.45, dampingFraction: 0.72)) { out = true }
-      withAnimation(.easeOut(duration: 0.35).delay(0.35)) { check = 1 }
-      if !reduceMotion { withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true).delay(0.6)) { float = true } }
+      out = true
+      withAnimation(.spring(response: 0.3, dampingFraction: 0.6).delay(0.32)) { check = 1 }
+      if !reduceMotion {
+        withAnimation(.easeOut(duration: 0.9).delay(0.45)) { halo = true }
+        withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true).delay(0.8)) { float = true }
+      }
     }
   }
 }
@@ -151,6 +170,17 @@ enum Art {
     cache[name] = image
     return image
   }
+  /// One earbud: the left or right half of the two-bud render.
+  static func bud(_ family: String, side: String) -> NSImage? {
+    let key = "\(family)-bud-\(side)"
+    if let hit = cache[key] { return hit }
+    guard let both = image("\(family)-buds"), let cg = both.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+    let half = cg.width / 2
+    guard let cropped = cg.cropping(to: CGRect(x: side == "left" ? 0 : half, y: 0, width: half, height: cg.height)) else { return nil }
+    let result = NSImage(cgImage: cropped, size: NSSize(width: half, height: cg.height))
+    cache[key] = result
+    return result
+  }
   /// Case shape family for a model key.
   static func family(_ model: String) -> String {
     if model.hasPrefix("airpods-max") { return "airpods-max" }
@@ -167,13 +197,18 @@ struct PodsArtwork: View {
   var caseSide = "both"
   @State private var risen = false
   @State private var float = false
+  @State private var lidPop = false
   var body: some View {
     let family = Art.family(model)
     let single = family == "airpods-max"
+    // Which buds are out of the case: they lift out as separate sprites and float beside it.
+    let leftOut = !single && lidOpen && (caseSide == "right" || caseSide == "none")
+    let rightOut = !single && lidOpen && (caseSide == "left" || caseSide == "none")
+    let empty = leftOut && rightOut
     ZStack {
       // soft contact shadow that breathes with the float
       Ellipse().fill(RadialGradient(colors: [.black.opacity(0.45), .clear], center: .center, startRadius: 2, endRadius: 70))
-        .frame(width: 130, height: 20).offset(y: 80).scaleEffect(float ? 0.86 : 1).opacity(risen ? 1 : 0)
+        .frame(width: 130, height: 20).offset(y: 80).scaleEffect(float ? 0.86 : 1).opacity(risen ? (empty ? 0.5 : 1) : 0)
       ZStack {
         if let closed = Art.image(single ? family : "\(family)-closed") {
           Image(nsImage: closed).resizable().interpolation(.high).scaledToFit().opacity(single || !lidOpen ? 1 : 0)
@@ -184,16 +219,52 @@ struct PodsArtwork: View {
       }
       .frame(width: 170, height: 170)
       .rotation3DEffect(.degrees(reduceMotion ? 0 : risen ? (float ? 6 : -6) : -38), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
-      .offset(y: risen ? (float ? -4 : 2) : 50)
-      .scaleEffect(risen ? 1 : 0.7)
-      .opacity(risen ? 1 : 0)
+      .offset(y: risen ? (float ? -4 : 2) + (empty ? 14 : 0) : 50)
+      .scaleEffect((risen ? 1 : 0.7) * (empty ? 0.8 : 1) * (lidPop ? 1.035 : 1))
+      // The open-case render always contains both buds; with both out the case recedes almost entirely.
+      .opacity(risen ? (empty ? 0.08 : 1) : 0)
+      if !single {
+        BudSprite(family: family, side: "left", out: leftOut, float: float)
+        BudSprite(family: family, side: "right", out: rightOut, float: float)
+      }
     }
     .frame(height: 180)
     .animation(.easeInOut(duration: 0.32), value: lidOpen)
+    .animation(.spring(response: 0.5, dampingFraction: 0.78), value: caseSide)
+    .onChange(of: lidOpen) { open in
+      // The lid "gives" a little as it opens, like the case on iPhone's card.
+      guard open, !reduceMotion else { return }
+      withAnimation(.spring(response: 0.22, dampingFraction: 0.5)) { lidPop = true }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) { lidPop = false } }
+    }
     .onAppear {
       withAnimation(.spring(response: 0.42, dampingFraction: 0.78)) { risen = true }
       if !reduceMotion { withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true).delay(0.8)) { float = true } }
     }
+  }
+}
+
+/// One earbud cut from the two-bud render: rests in its slot (hidden, small) or lifts out, tilts and floats beside
+/// the case. Changing `out` animates the bud leaving or returning to the case.
+struct BudSprite: View {
+  var family: String
+  var side: String
+  var out: Bool
+  var float: Bool
+  var body: some View {
+    let sign: CGFloat = side == "left" ? -1 : 1
+    Group {
+      if let image = Art.bud(family, side: side) {
+        Image(nsImage: image).resizable().interpolation(.high).scaledToFit()
+      }
+    }
+    .frame(width: 70, height: 110)
+    .rotationEffect(.degrees(out ? Double(sign) * (float ? 10 : 14) : 0))
+    .scaleEffect(out ? 0.78 : 0.34)
+    .offset(x: out ? sign * 108 : sign * 20, y: out ? (float ? -30 : -22) : -14)
+    .opacity(out ? 1 : 0)
+    .shadow(color: .black.opacity(out ? 0.35 : 0), radius: 10, y: 8)
+    .allowsHitTesting(false)
   }
 }
 
@@ -203,23 +274,42 @@ struct BatteryRing: View {
   var label: String
   var level: Int?
   var charging: Bool
+  /// Seconds after the card appears before this ring fills, so the three rings fill one after another.
+  var delay = 0.3
   @State private var fill = 0.0
+  @State private var shown = 0
+  @State private var breathe = false
   var body: some View {
     VStack(spacing: 8) {
       ZStack {
         Circle().stroke(Color.white.opacity(0.12), lineWidth: 4)
         Circle().trim(from: 0, to: fill).stroke(color, style: StrokeStyle(lineWidth: 4, lineCap: .round)).rotationEffect(.degrees(-90))
-        Text(level.map { "\($0)%" } ?? "—").font(.system(size: 13, weight: .semibold)).monospacedDigit().foregroundStyle(.white)
+        Text(level == nil ? "—" : "\(shown)%").font(.system(size: 13, weight: .semibold)).monospacedDigit().foregroundStyle(.white)
         if charging {
           Image(systemName: "bolt.fill").font(.system(size: 10, weight: .bold)).foregroundStyle(.black)
-            .frame(width: 16, height: 16).background(Circle().fill(Color.green)).offset(x: 18, y: -18)
+            .frame(width: 16, height: 16).background(Circle().fill(Color.green))
+            .scaleEffect(breathe ? 1.08 : 0.94).offset(x: 18, y: -18)
+            .transition(.scale.combined(with: .opacity))
         }
       }
       .frame(width: 50, height: 50)
       Text(label).font(.system(size: 11)).foregroundStyle(Color.white.opacity(0.55))
     }
-    .onAppear { withAnimation(.easeOut(duration: 0.7).delay(0.3)) { fill = Double(level ?? 0) / 100 } }
-    .onChange(of: level) { value in withAnimation(.easeOut(duration: 0.4)) { fill = Double(value ?? 0) / 100 } }
+    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: charging)
+    .onAppear {
+      let target = level ?? 0
+      withAnimation(.easeOut(duration: 0.8).delay(delay)) { fill = Double(target) / 100 }
+      // Count the number up alongside the ring.
+      for step in 0...8 {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay + Double(step) * 0.09) {
+          withAnimation(.easeOut(duration: 0.12)) { shown = target * step / 8 }
+        }
+      }
+      if !reduceMotion { withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) { breathe = true } }
+    }
+    .onChange(of: level) { value in
+      withAnimation(.easeOut(duration: 0.4)) { fill = Double(value ?? 0) / 100; shown = value ?? 0 }
+    }
   }
   private var color: Color { guard let level else { return .clear }; return level <= 20 && !charging ? .red : .green }
 }
@@ -300,10 +390,10 @@ struct PopupCard: View {
       .id("\(model.pods.model)-\(model.generation)-\(model.worn)")
       .animation(.easeInOut(duration: 0.25), value: model.worn)
       HStack(spacing: 40) {
-        if model.pods.left != nil { BatteryRing(label: "左耳", level: model.pods.left, charging: model.pods.chargingLeft).transition(.opacity) }
-        if model.pods.right != nil { BatteryRing(label: "右耳", level: model.pods.right, charging: model.pods.chargingRight).transition(.opacity) }
+        if model.pods.left != nil { BatteryRing(label: "左耳", level: model.pods.left, charging: model.pods.chargingLeft, delay: 0.3).transition(.opacity) }
+        if model.pods.right != nil { BatteryRing(label: "右耳", level: model.pods.right, charging: model.pods.chargingRight, delay: 0.42).transition(.opacity) }
         if !model.pods.model.hasPrefix("airpods-max") && !model.worn && model.pods.caseLevel != nil {
-          BatteryRing(label: "充电盒", level: model.pods.caseLevel, charging: model.pods.chargingCase).transition(.opacity)
+          BatteryRing(label: "充电盒", level: model.pods.caseLevel, charging: model.pods.chargingCase, delay: 0.54).transition(.opacity)
         }
       }
       .frame(height: 76)

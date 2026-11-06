@@ -275,7 +275,10 @@ readCommands { command in
     if command["demo"] as? Bool == true {
       var fields = modelFields(UInt16((command["productId"] as? String ?? "0x200F").dropFirst(2), radix: 16) ?? 0x200F)
       fields.merge(["left": 90, "right": 80, "case": 60, "charging": ["case": true]]) { $1 }
-      if command["worn"] as? Bool == true { popup.worn(snapshot(fields)) } else { popup.show(snapshot(fields), key: "demo-\(Date().timeIntervalSince1970)") }
+      // "caseSide" (both/left/right/none) updates the visible card, to preview a bud leaving or returning.
+      if let side = command["caseSide"] as? String { fields["caseSide"] = side; popup.update(snapshot(fields)) }
+      else if command["worn"] as? Bool == true { popup.worn(snapshot(fields)) }
+      else { popup.show(snapshot(fields), key: "demo-\(Date().timeIntervalSince1970)") }
     }
   default: emit("error", ["message": "unknown command", "command": command])
   }
