@@ -61,4 +61,5 @@
 .status > :last-child { flex-shrink: 0; white-space: nowrap; }
 .status[data-ok='true'] { border-color: var(--dsw-alias-state-success-primary); }
 .list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 18px; color: var(--dsw-alias-label-secondary); }
-.actions { display: flex; gap: 8px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.actions > button { flex: none; white-space: nowrap; }

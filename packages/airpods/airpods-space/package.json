@@ -1,7 +1,7 @@
 {
   "name": "@lmk1010/airpods-space",
   "description": "Press your AirPods to talk to DSH: native helper lifecycle, streaming recognition and the airpods Remote",
-  "version": "0.2.2-rc.1",
+  "version": "0.2.2-rc.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",

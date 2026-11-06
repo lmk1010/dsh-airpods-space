@@ -1,7 +1,7 @@
 {
   "name": "@lmk1010/speech-streaming-sherpa",
   "description": "Local streaming Paraformer (Chinese/English) recognition through sherpa-onnx in a dedicated process",
-  "version": "0.2.2-rc.1",
+  "version": "0.2.2-rc.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",

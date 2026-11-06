@@ -1,7 +1,7 @@
 {
   "name": "@lmk1010/client-ui-airpods-space",
   "description": "Live AirPods captions above the composer; finished turns go into the draft or are sent",
-  "version": "0.2.2-rc.1",
+  "version": "0.2.2-rc.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",

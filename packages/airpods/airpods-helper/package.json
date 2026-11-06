@@ -1,7 +1,7 @@
 {
   "name": "@lmk1010/airpods-helper",
   "description": "macOS native helper: AirPods proximity, connections, connect card and press-to-talk capture",
-  "version": "0.2.2-rc.1",
+  "version": "0.2.2-rc.1.1",
   "type": "module",
   "exports": {
     ".": {
