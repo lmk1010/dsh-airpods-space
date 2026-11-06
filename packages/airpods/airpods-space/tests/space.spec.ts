@@ -83,7 +83,7 @@ it.skipIf(process.platform !== 'darwin')('falls back to the local provider when 
     open: async () => { throw new Error('network down') },
   })
   await collect(space, updates => updates.some(update => update.type === 'snapshot' && update.snapshot.helper === 'running'))
-  space.setPreferences({ sendMode: 'pause', pauseSeconds: 1, popupCard: true, nearbyUnpaired: true, doneSound: false, earcons: false, readApproval: false, progress: false, nextAction: 'send', previousAction: 'interrupt', quickInterrupt: true, quickInsert: true, voiceCommands: true, autoRead: false, asrSource: 'cloud', onboarded: true })
+  space.setPreferences({ sendMode: 'pause', pauseSeconds: 1, popupCard: true, nearbyUnpaired: true, doneSound: false, earcons: false, readApproval: false, progress: false, nextAction: 'send', previousAction: 'interrupt', headGestures: true, quickInterrupt: true, quickInsert: true, voiceCommands: true, autoRead: false, asrSource: 'cloud', onboarded: true })
   const turn = collect(space, updates => updates.some(update => update.type === 'transcript' && update.transcript.phase !== 'partial'))
   space.press()
   const final = (await turn).flatMap(update => update.type === 'transcript' ? [update.transcript] : []).at(-1)
@@ -111,7 +111,7 @@ it.skipIf(process.platform !== 'darwin')('survives a helper that keeps exiting w
   try {
     const space = new AirpodsSpace(ctx, AirpodsSpace.Config({ executable: '/usr/bin/true', assets: '/tmp', restartDelaysMs: [50, 50, 50] }))
     for (let i = 0; i < 40; i++) {
-      space.setPreferences({ sendMode: 'pause', pauseSeconds: 1, popupCard: true, nearbyUnpaired: true, doneSound: false, earcons: false, readApproval: false, progress: false, nextAction: 'send', previousAction: 'interrupt', quickInterrupt: true, quickInsert: true, voiceCommands: true, autoRead: false, asrSource: 'local', onboarded: true })
+      space.setPreferences({ sendMode: 'pause', pauseSeconds: 1, popupCard: true, nearbyUnpaired: true, doneSound: false, earcons: false, readApproval: false, progress: false, nextAction: 'send', previousAction: 'interrupt', headGestures: true, quickInterrupt: true, quickInsert: true, voiceCommands: true, autoRead: false, asrSource: 'local', onboarded: true })
       await new Promise(resolve => setTimeout(resolve, 25))
     }
     expect(unhandled).toEqual([])

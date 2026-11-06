@@ -294,7 +294,7 @@ export function createAirpodsButton({ airpods, press, takeButton, connectDevice,
     }, [doneSound, sessionId])
 
     // Nod / shake listen only while an approval card is on screen.
-    const headMotion = view.snapshot?.headMotion ?? false
+    const headMotion = (view.snapshot?.headMotion ?? false) && (view.snapshot?.preferences.headGestures ?? true)
     useEffect(() => {
       if (!headMotion) return
       let on = false

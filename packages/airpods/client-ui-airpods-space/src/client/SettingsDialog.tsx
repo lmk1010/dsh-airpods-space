@@ -4,8 +4,8 @@
  * immediately.
  */
 import { useEffect, useState, type ReactNode } from 'react'
-import { Button, IconCloseOutlineRegular, IconMicrophoneOutlineRegular, Modal, SegmentedControl, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { AirpodsSnapshot, DeviceInfo, Preferences } from '@dshub/airpods-space/types'
+import { Button, IconCloseOutlineRegular, IconMicrophoneOutlineRegular, Menu, Modal, SegmentedControl, Switch } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { AirpodsSnapshot, DeviceInfo, GestureAction, Preferences } from '@dshub/airpods-space/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { AirpodsKey, NS } from './locales.ts'
 import { CloudKeyField } from './SourcePicker.tsx'
@@ -243,12 +243,26 @@ function Battery({ label, value }: { label: string; value: number | null }) {
 }
 
 function TalkPage({ snapshot, preferences, onPreferences, onSetup, t }: SettingsDialogProps) {
-  const doubleTap = doubleTapModel({ snapshot })
+  const caps = capabilities(snapshot)
+  const kind = caps.controls
+  const label = (n: 'Once' | 'Twice' | 'Thrice'): string => t(kind === 'crown' ? `gesture.crown${n}` : `gesture.press${n}`)
+  const disabledReason = caps.airpods ? undefined : t(caps.model === undefined ? 'gesture.noDevice' : 'gesture.notAirPods')
   return (<>
     <Group title={t('gesture.title')}>
-      <Row label={t(doubleTap ? 'gesture.tapTalk' : 'gesture.pressOnce')} detail={t(doubleTap ? 'gesture.tapTalkAction' : 'gesture.talkAction')} />
-      {doubleTap && <Row label={t('gesture.tapNext')} detail={t('gesture.tapNextDetail')} />}
-      {!doubleTap && <Row label={t('gesture.hold')} detail={t('gesture.holdDetail')} />}
+      {disabledReason && <Row label={disabledReason} />}
+      <Row label={kind === 'tap' ? t('gesture.tapTalk') : label('Once')}
+        detail={t(kind === 'tap' ? 'gesture.tapTalkAction' : 'gesture.talkAction')} />
+      <Row label={kind === 'tap' ? t('gesture.tapNext') : label('Twice')}
+        detail={t(kind === 'tap' ? 'gesture.tapNextDetail' : 'gesture.idleOnly')}>
+        <ActionPicker value={preferences.nextAction} t={t} disabled={!caps.airpods}
+          onChange={(nextAction) => { onPreferences({ ...preferences, nextAction }) }} />
+      </Row>
+      <Row label={kind === 'tap' ? t('gesture.tapPrevious') : label('Thrice')}
+        detail={t(kind === 'tap' ? 'gesture.tapPreviousDetail' : 'gesture.idleOnly')}>
+        <ActionPicker value={preferences.previousAction} t={t} disabled={!caps.airpods}
+          onChange={(previousAction) => { onPreferences({ ...preferences, previousAction }) }} />
+      </Row>
+      {kind === 'press' && <Row label={t('gesture.hold')} detail={t('gesture.holdDetail')} />}
     </Group>
     <Group>
       <Row label={t('menu.sendMode')} detail={t(preferences.sendMode === 'voice' ? 'send.voiceDetail' : 'send.pauseDetail', { seconds: String(preferences.pauseSeconds) })}>
@@ -327,7 +341,8 @@ function ReadPage({ preferences, onPreferences, onSpeak, onChime, t }: SettingsD
   )
 }
 
-function ShortcutsPage({ preferences, onPreferences, t }: SettingsDialogProps) {
+function ShortcutsPage({ snapshot, preferences, onPreferences, t }: SettingsDialogProps) {
+  const caps = capabilities(snapshot)
   const toggle = (key: 'quickInterrupt' | 'quickInsert' | 'voiceCommands', label: string, detail: string) => (
     <Row label={label} detail={detail}>
       <Switch checked={preferences[key]} label={label} onChange={(on) => { onPreferences({ ...preferences, [key]: on }) }} />
@@ -338,8 +353,56 @@ function ShortcutsPage({ preferences, onPreferences, t }: SettingsDialogProps) {
       {toggle('quickInterrupt', t('quick.interrupt'), t('quick.interruptDetail'))}
       {toggle('quickInsert', t('quick.insert'), t('quick.insertDetail'))}
       {toggle('voiceCommands', t('quick.commands'), t('quick.commandsDetail'))}
+      <Row label={t('quick.head')} detail={t(caps.headMotion ? 'quick.headDetail' : 'quick.headUnsupported')}>
+        <Switch checked={preferences.headGestures && caps.headMotion} disabled={!caps.headMotion} label={t('quick.head')}
+          onChange={(headGestures) => { onPreferences({ ...preferences, headGestures }) }} />
+      </Row>
     </Group>
   )
+}
+
+const ACTIONS: readonly GestureAction[] = ['send', 'interrupt', 'steer', 'undo', 'read', 'none']
+
+/** Dropdown of gesture actions, anchored like the composer's model selector. */
+function ActionPicker({ value, onChange, disabled, t }: {
+  value: GestureAction
+  onChange: (action: GestureAction) => void
+  disabled: boolean
+  t: SettingsDialogProps['t']
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <Menu open={open && !disabled} portal side="bottom" align="end" selectedIds={[value]} onClose={() => { setOpen(false) }}
+      onSelect={(id) => { setOpen(false); onChange(id as GestureAction) }}
+      items={ACTIONS.map(action => ({ id: action, label: t(`action.${action}`) }))}
+      anchor={(
+        <Button size="sm" variant="outline" disabled={disabled} aria-haspopup="menu" aria-expanded={open}
+          onClick={() => { setOpen(!open) }}>
+          {t(`action.${value}`)} ▾
+        </Button>
+      )} />
+  )
+}
+
+/** What the connected (or first paired) headphones can do; settings gray out what they cannot. */
+export interface Capabilities {
+  model: string | undefined
+  airpods: boolean
+  /** How talking starts: double-tap (AirPods 1/2), stem press (3/4/Pro) or the Digital Crown (Max). */
+  controls: 'tap' | 'press' | 'crown'
+  headMotion: boolean
+}
+
+/**
+ * Capabilities of the connected pair, else the first paired one.
+ * @param snapshot - Host state.
+ * @returns what the settings can offer.
+ */
+export function capabilities(snapshot: AirpodsSnapshot): Capabilities {
+  const model = (snapshot.devices.find(device => device.connected) ?? snapshot.devices[0])?.model
+  const airpods = model?.startsWith('airpods') ?? false
+  const controls = !model || /^airpods-[12]$/.test(model) ? 'tap' : model.startsWith('airpods-max') ? 'crown' : 'press'
+  return { model, airpods, controls, headMotion: /^airpods-(pro|3|4|max)/.test(model ?? '') }
 }
 
 /** AirPods 1/2 talk with a double-tap (or no pair connected yet); later models press the stem. */

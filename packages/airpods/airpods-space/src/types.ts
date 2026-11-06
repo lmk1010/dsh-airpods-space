@@ -151,11 +151,12 @@ export interface Preferences {
   readonly quickInsert: boolean
   /** Whole-utterance voice commands other than send and stop: cancel, clear, new session, read, approve, deny. */
   readonly voiceCommands: boolean
-  /** Next Track gesture (an AirPods 1/2 bud set to Next Track). Fixed to interrupt; stem double presses on AirPods 3/4/Pro
-   * were not delivered to apps on macOS in testing, so it is not offered as a setting. */
+  /** Next Track gesture: double stem press on AirPods 3/4/Pro (only while not talking), or an AirPods 1/2 bud set to Next Track. */
   readonly nextAction: GestureAction
   /** Previous Track gesture: triple stem press, or a bud set to Previous Track. */
   readonly previousAction: GestureAction
+  /** Nod / shake to answer DSH's approval requests (AirPods with motion sensors). */
+  readonly headGestures: boolean
 }
 
 /** Stream item: a full snapshot after any state change, a transcript update, or a command. */
