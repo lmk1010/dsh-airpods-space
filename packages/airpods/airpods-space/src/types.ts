@@ -135,6 +135,8 @@ export interface Preferences {
   readonly onboarded: boolean
   /** Show the battery card when an AirPods case opens nearby. */
   readonly popupCard: boolean
+  /** Also show it for AirPods this Mac never paired, when opened within arm's reach. */
+  readonly nearbyUnpaired: boolean
   /** Play a chime in the headset when DSH finishes a task, and a knock when it asks for approval. */
   readonly doneSound: boolean
   /** Soft tones when listening starts and ends. */

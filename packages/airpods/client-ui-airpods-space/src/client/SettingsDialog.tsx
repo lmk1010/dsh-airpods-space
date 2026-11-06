@@ -224,6 +224,10 @@ function DevicesPage(props: SettingsDialogProps) {
       <Row label={t('dev.popup')} detail={t('dev.popupDetail')}>
         <Switch checked={props.preferences.popupCard} label={t('dev.popup')} onChange={(popupCard) => { props.onPreferences({ ...props.preferences, popupCard }) }} />
       </Row>
+      <Row label={t('dev.nearby')} detail={t('dev.nearbyDetail')}>
+        <Switch checked={props.preferences.nearbyUnpaired} disabled={!props.preferences.popupCard} label={t('dev.nearby')}
+          onChange={(nearbyUnpaired) => { props.onPreferences({ ...props.preferences, nearbyUnpaired }) }} />
+      </Row>
       <Row label={t('dev.pair')}><Button size="sm" variant="outline" onClick={onPair}>{t('dev.pairAction')}</Button></Row>
     </Group>
   </>)

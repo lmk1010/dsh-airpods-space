@@ -27,7 +27,7 @@ const PREFERENCES_KEY = 'dsh.airpods-space.preferences.v2'
 /** Before v2 the send mode defaulted to sending after a pause; only the other choices carry over. */
 const PREFERENCES_KEY_V1 = 'dsh.airpods-space.preferences'
 const DEFAULT_PREFERENCES: Preferences = { sendMode: 'voice', pauseSeconds: 1, autoRead: true, asrSource: 'apple',
-  popupCard: true, doneSound: true, earcons: true, readApproval: true,
+  popupCard: true, nearbyUnpaired: true, doneSound: true, earcons: true, readApproval: true,
   progress: false, quickInterrupt: true, quickInsert: true, voiceCommands: true,
   nextAction: 'send', previousAction: 'interrupt',
   onboarded: globalThis.localStorage?.getItem('dsh.airpods-space.onboarded') !== null }

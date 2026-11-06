@@ -23,6 +23,8 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
   private var central: CBCentralManager!
   private let config: ProximityConfig
   /// Per bud: the last "other bud in case" bit it sent, and the value confirmed by two of its adverts in a row.
+  /// Cards for nearby AirPods this Mac never paired; switchable in settings.
+  var showUnpaired = true
   private var otherSeen: [UUID: (value: Bool, confirmed: Bool)] = [:]
   private var tracked: (id: UUID, lidByte: UInt8, lastSeen: Date, lastReport: Date, lastOpen: Date, lidOpen: Bool, rssi: Int, inCase: Bool)?
   private var lastRaw = ""
@@ -92,7 +94,7 @@ final class Proximity: NSObject, CBCentralManagerDelegate {
     // AirPods this Mac has never paired (someone else's, or new): like iPhone's setup card, only when held right next
     // to the Mac, so a stranger's case across the room never pops up.
     let unpaired = !pairedModels.contains(model)
-    if unpaired && signal < config.unpairedRssi { return }
+    if unpaired && (!showUnpaired || signal < config.unpairedRssi) { return }
     let status = b[7]
     let flip = (status & 0x20) == 0
     let hi = b[8] >> 4, lo = b[8] & 0x0F

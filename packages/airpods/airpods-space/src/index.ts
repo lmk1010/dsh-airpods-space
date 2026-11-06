@@ -92,7 +92,7 @@ export default class AirpodsSpace extends TypertRemoteService {
     permissions: { microphone: 'unknown', bluetooth: 'unknown', speech: 'unknown' }, model: { phase: 'unknown' }, devices: [],
     reading: false, headMotion: false, route: { output: '', outputBluetooth: false },
     preferences: { sendMode: 'voice', pauseSeconds: 1, autoRead: true, asrSource: 'apple', onboarded: false,
-      popupCard: true, doneSound: true, earcons: true, readApproval: true,
+      popupCard: true, nearbyUnpaired: true, doneSound: true, earcons: true, readApproval: true,
       progress: false, quickInterrupt: true, quickInsert: true, voiceCommands: true,
       nextAction: 'send', previousAction: 'interrupt' } }
   private readonly observers = new Set<Channel<AirpodsUpdate>>()
@@ -205,6 +205,7 @@ export default class AirpodsSpace extends TypertRemoteService {
   setPreferences(preferences: Preferences): void {
     this.set({ preferences, endSilenceMs: this.endSilenceMs(preferences) })
     this.helper?.send({ cmd: 'popup', enabled: preferences.popupCard })
+    this.helper?.send({ cmd: 'nearby', on: preferences.nearbyUnpaired })
     this.helper?.send({ cmd: 'earcons', on: preferences.earcons })
     this.helper?.send({ cmd: 'asr', source: preferences.asrSource === 'apple' ? 'apple' : 'host', locale: 'zh-CN' })
   }
